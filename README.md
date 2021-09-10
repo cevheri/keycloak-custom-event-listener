@@ -2,12 +2,20 @@
 
 "User create" and "register" events, listen and Call Rest API with Java
 
+
+### Clone :
+```shell
+git clone https://github.com/cevheri/keycloak-custom-event-listener
+
+cd keycloak-custom-event-listener
+```
+
 ### Generate JAR:
 ```shell
 mvn clean package
 ```
 
-### Attach keycloak dockerVolume
+### Attach keycloak dockerVolume (already in docker-compose file)
 ```yaml
     volumes:
       - ../../../target/custom-event-listener.jar://opt/jboss/keycloak/standalone/deployments/custom-event-listener.jar
