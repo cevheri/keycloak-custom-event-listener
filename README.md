@@ -35,6 +35,9 @@ docker-compose -f src/main/docker/docker-compose.yml up -d
 #### Then
 ![](files/create-new-user.png)
 
+#### API Design
+![keycloak-event-listener-call-api.png](..%2F..%2F..%2FDocuments%2Fkeycloak-event-listener-call-api.png)
+
 ### Test Result on MockAPI: 
 #### Setup Mock API
 ![](files/mockapi-view-api.png)
