@@ -35,15 +35,14 @@ public class CustomEventListenerProvider
 
         if (EventType.REGISTER.equals(event.getType())) {
 
-            event.getDetails().forEach((key, value) -> log.debugf("%s : %s",key, value));
+            event.getDetails().forEach((key, value) -> log.debugf("%s : %s", key, value));
 
             RealmModel realm = this.model.getRealm(event.getRealmId());
-            UserModel user = this.session.users().getUserById(event.getUserId(), realm);
+            UserModel user = this.session.users().getUserById(realm, event.getUserId());
             sendUserData(user);
         }
 
     }
-
 
 
     @Override
@@ -56,11 +55,12 @@ public class CustomEventListenerProvider
         if (ResourceType.USER.equals(adminEvent.getResourceType())
                 && OperationType.CREATE.equals(adminEvent.getOperationType())) {
             RealmModel realm = this.model.getRealm(adminEvent.getRealmId());
-            UserModel user = this.session.users().getUserById(adminEvent.getResourcePath().substring(6), realm);
+            UserModel user = this.session.users().getUserById(realm, adminEvent.getResourcePath().substring(6));
 
             sendUserData(user);
         }
     }
+
     private void sendUserData(UserModel user) {
         String data =
                 "{\"id\": " + user.getId() + "\"," +
@@ -76,8 +76,10 @@ public class CustomEventListenerProvider
             log.errorf("Failed to call API: %s", e);
         }
     }
+
     @Override
-    public void close() {}
+    public void close() {
+    }
 
     private String toString(Event event) {
 
@@ -121,7 +123,7 @@ public class CustomEventListenerProvider
         RealmModel realm = this.model.getRealm(event.getRealmId());
 
         UserModel newRegisteredUser =
-                this.session.users().getUserById(event.getAuthDetails().getUserId(), realm);
+                this.session.users().getUserById(realm, event.getAuthDetails().getUserId());
 
 
         StringBuilder sb = new StringBuilder();
