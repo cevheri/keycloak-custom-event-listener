@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.keycloak</groupId>
         <artifactId>keycloak-parent</artifactId>
-        <version>21.0.1</version>
+        <version>21.0.2</version>
     </parent>
 
     <groupId>com.cevher.keycloak</groupId>
     <artifactId>custom-event-listener</artifactId>
-    <version>0.0.1</version>
+    <version>21.0.2</version>
     <packaging>jar</packaging>
 
     <properties>
