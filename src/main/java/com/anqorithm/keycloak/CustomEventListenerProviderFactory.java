@@ -1,4 +1,4 @@
-package com.cevher.keycloak;
+package com.anqorithm.keycloak;
 
 import org.keycloak.Config;
 import org.keycloak.events.EventListenerProvider;
@@ -8,9 +8,10 @@ import org.keycloak.models.KeycloakSessionFactory;
 
 public class CustomEventListenerProviderFactory
         implements EventListenerProviderFactory {
+
     @Override
     public EventListenerProvider create(KeycloakSession keycloakSession) {
-        return new com.cevher.keycloak.CustomEventListenerProvider(keycloakSession);
+        return new com.anqorithm.keycloak.CustomEventListenerProvider(keycloakSession);
     }
 
     @Override

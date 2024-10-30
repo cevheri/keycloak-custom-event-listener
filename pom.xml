@@ -10,7 +10,7 @@
         <version>21.0.2</version>
     </parent>
 
-    <groupId>com.cevher.keycloak</groupId>
+    <groupId>com.anqorithm.keycloak</groupId>
     <artifactId>custom-event-listener</artifactId>
     <version>21.0.2</version>
     <packaging>jar</packaging>

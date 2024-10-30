@@ -1,4 +1,6 @@
-package com.cevher.keycloak;
+package com.anqorithm.keycloak;
+
+import java.util.Map;
 
 import org.jboss.logging.Logger;
 import org.keycloak.events.Event;
@@ -11,8 +13,6 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.RealmProvider;
 import org.keycloak.models.UserModel;
-
-import java.util.Map;
 
 public class CustomEventListenerProvider
         implements EventListenerProvider {
@@ -44,7 +44,6 @@ public class CustomEventListenerProvider
 
     }
 
-
     @Override
     public void onEvent(AdminEvent adminEvent, boolean b) {
         log.debug("onEvent(AdminEvent)");
@@ -62,13 +61,13 @@ public class CustomEventListenerProvider
     }
 
     private void sendUserData(UserModel user) {
-        String data =
-                "{\"id\": " + user.getId() + "\"," +
-                        "{\"email\": " + user.getEmail() + "\"," +
-                        "\"userName\":\"" + user.getUsername() + "\"," +
-                        "\"firstName\":\"" + user.getFirstName() + "\"," +
-                        "\"lastName\":\"" + user.getLastName() + "\"," +
-                        "}";
+        String data
+                = "{\"id\": " + user.getId() + "\","
+                + "{\"email\": " + user.getEmail() + "\","
+                + "\"userName\":\"" + user.getUsername() + "\","
+                + "\"firstName\":\"" + user.getFirstName() + "\","
+                + "\"lastName\":\"" + user.getLastName() + "\","
+                + "}";
         try {
             Client.postService(data);
             log.debug("A new user has been created and post API");
@@ -99,7 +98,6 @@ public class CustomEventListenerProvider
             sb.append(event.getError());
         }
 
-
         if (event.getDetails() != null) {
             for (Map.Entry<String, String> e : event.getDetails().entrySet()) {
                 sb.append(", ");
@@ -122,9 +120,8 @@ public class CustomEventListenerProvider
 
         RealmModel realm = this.model.getRealm(event.getRealmId());
 
-        UserModel newRegisteredUser =
-                this.session.users().getUserById(realm, event.getAuthDetails().getUserId());
-
+        UserModel newRegisteredUser
+                = this.session.users().getUserById(realm, event.getAuthDetails().getUserId());
 
         StringBuilder sb = new StringBuilder();
         sb.append("operationType=");
