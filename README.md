@@ -165,9 +165,6 @@ sequenceDiagram
     
 ```
 
-![Architecture](assets/10.png)
-
-
 ## Development
 
 ### Local Testing
