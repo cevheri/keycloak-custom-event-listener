@@ -22,7 +22,7 @@ public class Client {
                 throw new IllegalArgumentException("Environment variable WEBHOOK_URL is not set or is empty.");
             }
 
-            URL url = URI.create(urlString).toURL(); // Fixed to use the variable urlString
+            URL url = URI.create(urlString).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
