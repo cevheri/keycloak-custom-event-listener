@@ -6,7 +6,7 @@ A Keycloak extension that listens for user events (create/register) and forwards
 ## Quick Start
 ```bash
 # Clone the repository
-git clone https://github.com/anqorithm/keycloak-custom-event-listener.git
+git clone https://github.com/cevher/keycloak-custom-event-listener.git
 cd keycloak-custom-event-listener
 
 # Set up environment variables
@@ -35,7 +35,7 @@ docker-compose up -d
 
 #### Clone Repository
 ```bash
-git clone https://github.com/anqorithm/keycloak-custom-event-listener.git
+git clone https://github.com/cevher/keycloak-custom-event-listener.git
 cd keycloak-custom-event-listener
 ```
 
