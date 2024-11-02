@@ -1,7 +1,5 @@
 package com.cevher.keycloak;
 
-import java.util.Map;
-
 import org.jboss.logging.Logger;
 import org.keycloak.events.Event;
 import org.keycloak.events.EventListenerProvider;
@@ -13,6 +11,8 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.RealmProvider;
 import org.keycloak.models.UserModel;
+
+import java.util.StringJoiner;
 
 public class CustomEventListenerProvider
         implements EventListenerProvider {
@@ -61,13 +61,15 @@ public class CustomEventListenerProvider
     }
 
     private void sendUserData(UserModel user) {
-        String data
-                = "{\"id\": " + user.getId() + "\","
-                + "{\"email\": " + user.getEmail() + "\","
-                + "\"userName\":\"" + user.getUsername() + "\","
-                + "\"firstName\":\"" + user.getFirstName() + "\","
-                + "\"lastName\":\"" + user.getLastName() + "\","
-                + "}";
+        String data = """
+                {
+                    "id": "%s",
+                    "email": "%s",
+                    "userName": "%s",
+                    "firstName": "%s",
+                    "lastName": "%s"
+                }
+                """.formatted(user.getId(), user.getEmail(), user.getUsername(), user.getFirstName(), user.getLastName());
         try {
             Client.postService(data);
             log.debug("A new user has been created and post API");
@@ -81,77 +83,57 @@ public class CustomEventListenerProvider
     }
 
     private String toString(Event event) {
+        StringJoiner joiner = new StringJoiner(", ");
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("type=");
-        sb.append(event.getType());
-        sb.append(", realmId=");
-        sb.append(event.getRealmId());
-        sb.append(", clientId=");
-        sb.append(event.getClientId());
-        sb.append(", userId=");
-        sb.append(event.getUserId());
-        sb.append(", ipAddress=");
-        sb.append(event.getIpAddress());
+        joiner.add("type=" + event.getType())
+                .add("realmId=" + event.getRealmId())
+                .add("clientId=" + event.getClientId())
+                .add("userId=" + event.getUserId())
+                .add("ipAddress=" + event.getIpAddress());
+
         if (event.getError() != null) {
-            sb.append(", error=");
-            sb.append(event.getError());
+            joiner.add("error=" + event.getError());
         }
 
         if (event.getDetails() != null) {
-            for (Map.Entry<String, String> e : event.getDetails().entrySet()) {
-                sb.append(", ");
-                sb.append(e.getKey());
-                if (e.getValue() == null || e.getValue().indexOf(' ') == -1) {
-                    sb.append("=");
-                    sb.append(e.getValue());
+            event.getDetails().forEach((key, value) -> {
+                if (value == null || !value.contains(" ")) {
+                    joiner.add(key + "=" + value);
                 } else {
-                    sb.append("='");
-                    sb.append(e.getValue());
-                    sb.append("'");
+                    joiner.add(key + "='" + value + "'");
                 }
-            }
+            });
         }
 
-        return sb.toString();
+        return joiner.toString();
     }
 
     private String toString(AdminEvent event) {
-
         RealmModel realm = this.model.getRealm(event.getRealmId());
+        UserModel newRegisteredUser = this.session.users().getUserById(realm, event.getAuthDetails().getUserId());
 
-        UserModel newRegisteredUser
-                = this.session.users().getUserById(realm, event.getAuthDetails().getUserId());
+        StringJoiner joiner = new StringJoiner(", ");
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("operationType=");
-        sb.append(event.getOperationType());
-        sb.append(", realmId=");
-        sb.append(event.getAuthDetails().getRealmId());
-        sb.append(", clientId=");
-        sb.append(event.getAuthDetails().getClientId());
-        sb.append(", userId=");
-        sb.append(event.getAuthDetails().getUserId());
+        joiner.add("operationType=" + event.getOperationType())
+                .add("realmId=" + event.getAuthDetails().getRealmId())
+                .add("clientId=" + event.getAuthDetails().getClientId())
+                .add("userId=" + event.getAuthDetails().getUserId());
 
         if (newRegisteredUser != null) {
-            sb.append(", email=");
-            sb.append(newRegisteredUser.getEmail());
-            sb.append(", getUsername=");
-            sb.append(newRegisteredUser.getUsername());
-            sb.append(", getFirstName=");
-            sb.append(newRegisteredUser.getFirstName());
-            sb.append(", getLastName=");
-            sb.append(newRegisteredUser.getLastName());
-        }
-        sb.append(", ipAddress=");
-        sb.append(event.getAuthDetails().getIpAddress());
-        sb.append(", resourcePath=");
-        sb.append(event.getResourcePath());
-        if (event.getError() != null) {
-            sb.append(", error=");
-            sb.append(event.getError());
+            joiner.add("email=" + newRegisteredUser.getEmail())
+                    .add("username=" + newRegisteredUser.getUsername())
+                    .add("firstName=" + newRegisteredUser.getFirstName())
+                    .add("lastName=" + newRegisteredUser.getLastName());
         }
 
-        return sb.toString();
+        joiner.add("ipAddress=" + event.getAuthDetails().getIpAddress())
+                .add("resourcePath=" + event.getResourcePath());
+
+        if (event.getError() != null) {
+            joiner.add("error=" + event.getError());
+        }
+
+        return joiner.toString();
     }
+
 }
