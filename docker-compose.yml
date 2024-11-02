@@ -1,22 +1,42 @@
 services:
   # PostgreSQL Database Service
   postgres:
-    image: postgres:latest            # Using latest PostgreSQL image
-    container_name: keycloak_postgres # Custom container name for easy identification
+    image: postgres:17.0            # Using latest PostgreSQL image
+    container_name: postgres        # Custom container name for easy identification
     environment:
       # Database configuration
       POSTGRES_DB: keycloak          # Database name for Keycloak
       POSTGRES_USER: keycloak        # Database superuser username
-      POSTGRES_PASSWORD: keycloak_password # Database superuser password
+      POSTGRES_PASSWORD: postgres    # Database superuser password
     volumes:
       # Persistent storage for database files
       - postgres_data:/var/lib/postgresql/data
     networks:
       - keycloak_network             # Attach to internal network
+  pgadmin:
+    image: dpage/pgadmin4:8.12.0
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: postgres@cevheri.net
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+      - ./initdb/servers.json:/pgadmin4/servers.json
+    ports:
+      - "5433:80"
+    entrypoint:
+      - "/bin/sh"
+      - "-c"
+      - "/bin/echo 'postgres:5432:*:postgres:password' > /tmp/pgpassfile && chmod 600 /tmp/pgpassfile && /entrypoint.sh"
+    restart: unless-stopped
+    depends_on:
+      - postgres
 
   # Keycloak Authentication Service
   keycloak:
-    image: quay.io/keycloak/keycloak:latest # Official Keycloak image
+    image: quay.io/keycloak/keycloak:26.0 # Official Keycloak image
     container_name: keycloak         # Custom container name
     environment:
       # Database connection settings
@@ -45,6 +65,7 @@ services:
 # Persistent volumes configuration
 volumes:
   postgres_data:                   # Named volume for PostgreSQL data
+  pgadmin:                         # Named volume for pgAdmin data
     # Uses default driver and configuration
 
 # Network configuration

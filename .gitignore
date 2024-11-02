@@ -2,3 +2,5 @@
 /.idea/
 *.iml
 .env
+/.vscode/
+/.settings/

@@ -19,25 +19,21 @@ mvn clean package
 # Copy JAR to Keycloak providers
 cp target/custom-event-listener.jar providers/
 
-# Start Keycloak
-# Start Keycloak
-docker-compose up -d
+# or 
+### Attach keycloak dockerVolume (already in docker-compose file)
+```yaml
+    volumes:
+      - ../../../target/custom-event-listener.jar://opt/jboss/keycloak/standalone/deployments/custom-event-listener.jar
 ```
+
+# Start Keycloak and Postgres
+docker-compose up -d
 
 ![Build](assets/12.png)
 
 
 ![Start](assets/13.png)
 
-## Detailed Setup Guide
-
-### 1. Installation
-
-#### Clone Repository
-```bash
-git clone https://github.com/cevher/keycloak-custom-event-listener.git
-cd keycloak-custom-event-listener
-```
 
 ### 2. Configuration
 
@@ -58,7 +54,7 @@ cp .env.example .env
 mvn clean package
 ```
 
-#### Deploy to Keycloak
+#### Deploy to Keycloak (Normal installation without Docker)
 ```bash
 # Create providers directory if it doesn't exist
 mkdir -p keycloak/providers
@@ -181,6 +177,7 @@ docker-compose down
 
 # Remove volumes (optional)
 docker-compose down -v
+docker volume ls | grep keycloak | awk '{print $2}' | xargs docker volume rm
 ```
 
 ## Troubleshooting
