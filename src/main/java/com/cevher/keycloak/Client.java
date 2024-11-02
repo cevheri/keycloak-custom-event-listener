@@ -1,19 +1,29 @@
 package com.cevher.keycloak;
 
+import org.jboss.logging.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 public class Client {
+    private static final Logger log = Logger.getLogger(Client.class);
+    private static final String WEBHOOK_URL = "WEBHOOK_URL";
 
-    public static void postService(String data) {
+    public static void postService(String data) throws IOException {
         try {
+            final String urlString = System.getenv(WEBHOOK_URL);
+            log.debugf("WEBHOOK_URL: %s", urlString);
 
-            URL url = new URL("https://613933731fcce10017e78a68.mockapi.io/api/v1/users");
+            if (urlString == null || urlString.isEmpty()) {
+                throw new IllegalArgumentException("Environment variable WEBHOOK_URL is not set or is empty.");
+            }
+
+            URL url = URI.create(urlString).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
@@ -23,22 +33,21 @@ public class Client {
             os.write(data.getBytes());
             os.flush();
 
-            if (conn.getResponseCode() != HttpURLConnection.HTTP_CREATED) {
-                throw new RuntimeException("Failed : HTTP error code : "
-                        + conn.getResponseCode());
+            final int responseCode = conn.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_CREATED && responseCode != HttpURLConnection.HTTP_OK) {
+                throw new RuntimeException("Failed : HTTP error code : " + responseCode);
             }
-// just development
-//            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-//            String output;
-//            System.out.println("Output from Server .... \n");
-//            while ((output = br.readLine()) != null) {
-//                System.out.println(output);
-//            }
+
+            final BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String output;
+            log.debugf("Output from Server .... \n");
+            while ((output = br.readLine()) != null) {
+                System.out.println(output);
+                log.debugf("Input from Server: %s", output);
+            }
             conn.disconnect();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IOException("Failed to post service: " + e.getMessage(), e);
         }
-
     }
-
 }
