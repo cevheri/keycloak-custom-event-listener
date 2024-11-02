@@ -7,19 +7,21 @@
     <parent>
         <groupId>org.keycloak</groupId>
         <artifactId>keycloak-parent</artifactId>
-        <version>21.0.2</version>
+        <version>26.0.4</version>
     </parent>
 
     <groupId>com.cevher.keycloak</groupId>
     <artifactId>custom-event-listener</artifactId>
-    <version>21.0.2</version>
+    <version>26.0.4</version>
     <packaging>jar</packaging>
 
     <properties>
         <java.version>17</java.version>
+        <maven.version>3.9.8</maven.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 
     </properties>
 
