@@ -1,4 +1,4 @@
-package com.cevher.keycloak;
+package com.cevheri.keycloak;
 
 import java.util.Map;
 

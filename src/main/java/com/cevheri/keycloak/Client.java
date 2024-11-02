@@ -1,4 +1,4 @@
-package com.cevher.keycloak;
+package com.cevheri.keycloak;
 
 import java.io.BufferedReader;
 import java.io.IOException;
