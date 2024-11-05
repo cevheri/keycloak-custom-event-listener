@@ -5,9 +5,9 @@ services:
     container_name: postgres        # Custom container name for easy identification
     environment:
       # Database configuration
-      POSTGRES_DB: keycloak          # Database name for Keycloak
-      POSTGRES_USER: keycloak        # Database superuser username
-      POSTGRES_PASSWORD: postgres    # Database superuser password
+      POSTGRES_DB: ${POSTGRES_DB}          # Database name for Keycloak
+      POSTGRES_USER: ${POSTGRES_USER}      # Database superuser username
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Database superuser password
     volumes:
       # Persistent storage for database files
       - postgres_data:/var/lib/postgresql/data
@@ -17,10 +17,10 @@ services:
     image: dpage/pgadmin4:8.12.0
     container_name: pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: postgres@cevheri.net
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: ${PGADMIN_CONFIG_SERVER_MODE}
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: ${PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED}
     volumes:
       - pgadmin:/var/lib/pgadmin
       - ./initdb/servers.json:/pgadmin4/servers.json
@@ -40,14 +40,14 @@ services:
     container_name: keycloak         # Custom container name
     environment:
       # Database connection settings
-      KC_DB: postgres               # Database type
-      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak # JDBC connection URL
-      KC_DB_USERNAME: keycloak      # Must match POSTGRES_USER
-      KC_DB_PASSWORD: keycloak_password # Must match POSTGRES_PASSWORD
+      KC_DB: ${KC_DB}                     # Database type
+      KC_DB_URL: ${KC_DB_URL}             # JDBC connection URL
+      KC_DB_USERNAME: ${KC_DB_USERNAME}    # Must match POSTGRES_USER
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}    # Must match POSTGRES_PASSWORD
       # Admin console credentials
-      KEYCLOAK_ADMIN: admin         # Initial admin username
-      KEYCLOAK_ADMIN_PASSWORD: admin # Initial admin password
-      WEBHOOK_URL: https://webhook.site/e3c4fcc7-1a21-40d3-aedd-1b6963270d25
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}    # Initial admin username
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD} # Initial admin password
+      WEBHOOK_URL: ${WEBHOOK_URL}
     volumes:
       # Mount directory for custom extensions (email domain validation)
       - ./providers:/opt/keycloak/providers
